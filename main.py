@@ -1,70 +1,120 @@
-import streamlit as st
-import matplotlib.pyplot as plt
-from main import analizar_experimento
+import numpy as np
+import pandas as pd
+from scipy.optimize import curve_fit
+import os
 
-st.set_page_config(layout="wide")
+ruta = os.getcwd()
 
-st.title("Superconductor Analysis Dashboard")
+# ================= CARGA DE DATOS =================
 
-# ================= SELECTORES =================
+def cargar_datos(ruta, id):
+    fVA = os.path.join(ruta, f'Run0_{id}.Cn1')
+    fVB = os.path.join(ruta, f'Run0_{id}.Cn2')
 
-expIDs = ['01968','01966','01964','01962','01970','01972']
+    cols = ['Tiempo','T','I','V','Err','Cfg']
 
-col1, col2 = st.columns(2)
+    Tva = pd.read_csv(fVA, names=cols)
+    Tvb = pd.read_csv(fVB, names=cols)
 
-with col1:
-    modelo = st.selectbox("Modelo", ["gauss", "lorentz"])
+    Vprom = 0.5 * (Tva['V'] - Tvb['V']) * 1e6
+    Temp = 0.5 * (Tva['T'] + Tvb['T'])
 
-with col2:
-    exp = st.selectbox("Experimento", expIDs)
+    I = Tva['I'].iloc[0] * 1e3
 
-# ================= ANÁLISIS =================
+    mask = (Temp >= 80) & (Temp <= 100)
 
-try:
-    data = analizar_experimento(exp, modelo)
+    Temp = Temp[mask].values
+    Vprom = Vprom[mask].values
 
-    # ================= GRÁFICA =================
-    fig, ax = plt.subplots(figsize=(8,5))
+    dVdT = np.gradient(Vprom) / np.gradient(Temp)
 
-    ax.scatter(
-        data["T"], data["dVdT"],
-        color=(0.2,0.6,0.2),
-        edgecolors='black',
-        label="Datos"
+    return Temp, dVdT, I
+
+# ================= MODELOS =================
+
+def lorentz(x, A, x0, s):
+    return A*(0.5*s)/((x-x0)**2 + (0.5*s)**2)
+
+def doble_lorentz(x, A1,x1,s1,A2,x2,s2):
+    return lorentz(x,A1,x1,s1) + lorentz(x,A2,x2,s2)
+
+def gauss(x, A, x0, s):
+    return A*np.exp(-((x-x0)**2)/(2*s**2))
+
+def doble_gauss(x, A1,x1,s1,A2,x2,s2):
+    return gauss(x,A1,x1,s1) + gauss(x,A2,x2,s2)
+
+# ================= ANÁLISIS INDIVIDUAL =================
+
+def analizar_experimento(id, modelo="gauss"):
+
+    T, dVdT, I = cargar_datos(ruta, id)
+
+    Amax = np.max(dVdT)
+    x_est = T[np.argmax(dVdT)]
+
+    func = doble_gauss if modelo == "gauss" else doble_lorentz
+
+    popt, _ = curve_fit(
+        func,
+        T,
+        dVdT,
+        p0=[Amax*0.2, x_est-1, 0.3,
+            Amax*0.8, x_est, 0.5],
+        maxfev=10000
     )
 
-    ax.plot(data["fitX"], data["c1"], '--',
-            color=(0.1,0.6,1.0), label='Componente 1')
+    A1,x1,s1,A2,x2,s2 = popt
 
-    ax.plot(data["fitX"], data["c2"], '--',
-            color=(1.0,0.6,0.0), label='Componente 2')
+    fitX = np.linspace(min(T), max(T), 800)
 
-    ax.plot(data["fitX"], data["cT"], '-',
-            color=(0.8,0.2,0.2), label='Suma')
+    if modelo == "gauss":
+        c1 = gauss(fitX, A1,x1,s1)
+        c2 = gauss(fitX, A2,x2,s2)
+    else:
+        c1 = lorentz(fitX, A1,x1,s1)
+        c2 = lorentz(fitX, A2,x2,s2)
 
-    ax.set_xlabel("Temperatura (K)")
-    ax.set_ylabel("dV/dT (µV/K)")
-    ax.set_title(f'I = {data["I"]:.2f} mA | Exp {exp}')
-    ax.grid()
-    ax.legend()
+    cT = c1 + c2
 
-    st.pyplot(fig)
+    return {
+        "T": T,
+        "dVdT": dVdT,
+        "fitX": fitX,
+        "c1": c1,
+        "c2": c2,
+        "cT": cT,
+        "I": I,
+        "params": (A1,x1,s1,A2,x2,s2)
+    }
 
-    # ================= PARÁMETROS =================
+# ================= ANÁLISIS GLOBAL =================
 
-    st.subheader("Parámetros del ajuste")
+def analizar_todos(expIDs, modelo="gauss"):
 
-    A1,x1,s1,A2,x2,s2 = data["params"]
+    resultados = []
 
-    col1, col2 = st.columns(2)
+    for id in expIDs:
 
-    with col1:
-        st.metric("Centro 1 (K)", f"{x1:.3f}")
-        st.metric("Sigma 1", f"{s1:.3f}")
+        try:
+            data = analizar_experimento(id, modelo)
 
-    with col2:
-        st.metric("Centro 2 (K)", f"{x2:.3f}")
-        st.metric("Sigma 2", f"{s2:.3f}")
+            A1,x1,s1,A2,x2,s2 = data["params"]
 
-except Exception as e:
-    st.error(f"Error en el análisis: {e}")
+            resultados.append({
+                "Exp": id,
+                "I": data["I"],
+                "Centro1": x1,
+                "Centro2": x2,
+                "Error1": s1/2,
+                "Error2": s2/2
+            })
+
+        except:
+            pass
+
+    df = pd.DataFrame(resultados)
+
+    df = df.sort_values(by="I")
+
+    return df

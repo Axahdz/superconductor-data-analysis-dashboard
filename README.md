@@ -1,174 +1,80 @@
-\# Superconductor Data Analysis Dashboard
+# Superconductor Data Analysis Dashboard
 
+Interactive scientific dashboard for superconducting experimental data analysis using Python, numerical methods, and curve fitting.
 
+This project processes real superconducting transition measurements, applies double Gaussian and Lorentzian fitting models, and visualizes the results through an interactive Streamlit dashboard.
 
-This project was developed to analyze experimental superconducting data and visualize the results in an interactive way.
+---
 
+## Features
 
+- Reads experimental `.Cn1` and `.Cn2` measurement files
+- Computes average voltage and temperature
+- Calculates numerical derivatives (`dV/dT`)
+- Applies:
+  - Double Gaussian fitting
+  - Double Lorentzian fitting
+- Interactive experiment selection
+- Global Tc vs current analysis
+- Error visualization
+- Automatic scientific plotting
 
-It takes raw measurement files, processes the data, computes numerical derivatives, and applies curve fitting using both Gaussian and Lorentzian models. The results can be explored through a simple dashboard built with Streamlit.
+---
 
+## Dashboard Preview
 
+### Experiment Analysis
 
-\---
+![Experiment Analysis](screenshots/experiment-analysis.png)
 
+The dashboard allows interactive visualization of the superconducting transition for each experiment, including:
+- Raw experimental points
+- Individual fitted components
+- Total fitted curve
+- Extracted fitting parameters
 
+---
 
-\## What this project does
+### Global Tc Analysis
 
+![Global Tc Analysis](screenshots/global-tc-analysis.png)
 
+Global analysis compares the evolution of the fitted critical temperatures as a function of applied current.
 
-\* Reads experimental data from `.Cn1` and `.Cn2` files
+---
 
-\* Computes the average voltage and temperature
+## Scientific Context
 
-\* Calculates the numerical derivative (dV/dT)
+Unlike typical software portfolio projects, this repository focuses on scientific data analysis using real experimental measurements.
 
-\* Applies double Gaussian and Lorentzian fits
+The workflow combines:
 
-\* Displays results interactively per experiment
+- Scientific computing
+- Numerical analysis
+- Curve fitting
+- Data visualization
+- Interactive dashboards
+- Experimental physics
 
-\* Generates global comparisons such as Tc vs current
+This project was developed as part of superconductivity data analysis research workflows.
 
+---
 
+## Technologies Used
 
-\---
+- Python
+- NumPy
+- Pandas
+- SciPy
+- Matplotlib
+- Streamlit
 
+---
 
+## How to Run
 
-\## Why this project is different
-
-
-
-This is not a typical CRUD or tutorial project.
-
-
-
-The data comes from real experimental measurements, and the analysis involves numerical methods, curve fitting, and interpretation of physical behavior.
-
-
-
-It combines:
-
-
-
-\* Scientific computing
-
-\* Data analysis
-
-\* Software development
-
-
-
-All in a single workflow.
-
-
-
-\---
-
-
-
-\## Technologies used
-
-
-
-\* Python
-
-\* NumPy
-
-\* Pandas
-
-\* SciPy
-
-\* Matplotlib
-
-\* Streamlit
-
-
-
-\---
-
-
-
-\## How to run
-
-
-
-Clone the repository and install dependencies:
-
-
+Clone the repository:
 
 ```bash
-
-pip install -r requirements.txt
-
-```
-
-
-
-Then run:
-
-
-
-```bash
-
-python -m streamlit run app.py
-
-```
-
-
-
-The dashboard will open in your browser.
-
-
-
-\---
-
-
-
-\## Project structure
-
-
-
-```text
-
-app.py          # Dashboard
-
-analysis.py     # Data processing and fitting logic
-
-Run0\_\*.Cn1      # Experimental data (Va)
-
-Run0\_\*.Cn2      # Experimental data (Vb)
-
-```
-
-
-
-\---
-
-
-
-\## Notes
-
-
-
-The analysis focuses on the temperature range where the superconducting transition occurs, and uses numerical derivatives to highlight the transition behavior.
-
-
-
-\---
-
-
-
-\## Author
-
-
-
-Javier Axayácatl Melchor Hernández
-
-
-
-Background in Physics with experience in software development and data analysis.
-
-
-
+git clone https://github.com/Axahdz/superconductor-data-analysis-dashboard.git
+cd superconductor-data-analysis-dashboard
