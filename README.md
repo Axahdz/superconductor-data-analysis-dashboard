@@ -1,6 +1,6 @@
 # Superconductor Data Analysis Dashboard
 
-Interactive scientific dashboard for superconducting experimental data analysis using Python, numerical methods, and curve fitting.
+Interactive scientific dashboard for superconducting experimental data analysis using Python, numerical methods, and nonlinear curve fitting.
 
 This project processes real superconducting transition measurements, applies double Gaussian and Lorentzian fitting models, and visualizes the results through an interactive Streamlit dashboard.
 
@@ -23,11 +23,20 @@ This project processes real superconducting transition measurements, applies dou
 
 ## Dashboard Preview
 
+### Dashboard Overview
+
+![Dashboard Overview](screenshots/dashboard_main_view.png)
+
+Main dashboard interface with interactive experiment and model selection.
+
+---
+
 ### Experiment Analysis
 
-![Experiment Analysis](screenshots/experiment-analysis.png)
+![Experiment Analysis](screenshots/experiment_fit_view.png)
 
 The dashboard allows interactive visualization of the superconducting transition for each experiment, including:
+
 - Raw experimental points
 - Individual fitted components
 - Total fitted curve
@@ -37,7 +46,7 @@ The dashboard allows interactive visualization of the superconducting transition
 
 ### Global Tc Analysis
 
-![Global Tc Analysis](screenshots/global-tc-analysis.png)
+![Global Tc Analysis](screenshots/global_analysis_view.png)
 
 Global analysis compares the evolution of the fitted critical temperatures as a function of applied current.
 
@@ -68,6 +77,7 @@ This project was developed as part of superconductivity data analysis research w
 - SciPy
 - Matplotlib
 - Streamlit
+- OpenPyXL
 
 ---
 
