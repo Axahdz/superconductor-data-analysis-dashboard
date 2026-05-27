@@ -88,3 +88,68 @@ Clone the repository:
 ```bash
 git clone https://github.com/Axahdz/superconductor-data-analysis-dashboard.git
 cd superconductor-data-analysis-dashboard
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Run the dashboard:
+
+```bash
+python -m streamlit run app.py
+```
+
+The application will open automatically in your browser at:
+
+```text
+http://localhost:8501
+```
+
+---
+
+## Project Structure
+
+```text
+superconductor-data-analysis-dashboard/
+│
+├── app.py
+├── main.py
+├── requirements.txt
+├── README.md
+├── .gitignore
+├── LICENSE
+│
+├── screenshots/
+│   ├── dashboard_main_view.png
+│   ├── experiment_fit_view.png
+│   └── global_analysis_view.png
+│
+├── Run0_*.Cn1
+└── Run0_*.Cn2
+```
+
+---
+
+## Analysis Overview
+
+The analysis focuses on the superconducting transition region between approximately 80 K and 100 K.
+
+The numerical derivative enhances the transition signal, allowing more precise extraction of critical temperatures through nonlinear fitting methods.
+
+Both Gaussian and Lorentzian models are supported for comparative analysis.
+
+---
+
+## Author
+
+Javier Axayácatl Melchor Hernández
+
+Background in Physics with experience in:
+
+- Scientific computing
+- Data analysis
+- Python development
+- Numerical modeling
+- Experimental data visualization
